@@ -10,14 +10,15 @@ import backtype.storm.generated.AlreadyAliveException;
 import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
+
 import common.bolts.ConsolePrintBolt;
 import common.bolts.TextSplitToWordsBolt;
 import common.bolts.WordCountBolt;
 import common.bolts.WordFilterBolt;
 
 public class WikiTopology {
-	public static void main(String[] args) {
-		TopologyBuilder builder = new TopologyBuilder();
+	public static void main(final String[] args) {
+		final TopologyBuilder builder = new TopologyBuilder();
 		builder.setSpout("wikiDumpReferenceSpout", new WikiDumpReferenceSpout(), 1);
 
 		builder.setBolt("wikiArticleGeneratorBolt", new WikiArticleGeneratorBolt(), 2).shuffleGrouping("wikiDumpReferenceSpout");
@@ -27,7 +28,7 @@ public class WikiTopology {
 		builder.setBolt("wordCountBolt", new WordCountBolt(), 2).fieldsGrouping("wordFilterBolt", new Fields("word"));
 		builder.setBolt("consolePrintBolt", new ConsolePrintBolt(), 2).shuffleGrouping("wordCountBolt");
 
-		Config conf = new Config();
+		final Config conf = new Config();
 
 		if (args != null && args.length > 0) {
 			conf.setNumWorkers(7);
@@ -37,7 +38,7 @@ public class WikiTopology {
 				throw new RuntimeException(e);
 			}
 		} else {
-			LocalCluster cluster = new LocalCluster();
+			final LocalCluster cluster = new LocalCluster();
 			cluster.submitTopology("wiki-topology", conf, builder.createTopology());
 		}
 	}

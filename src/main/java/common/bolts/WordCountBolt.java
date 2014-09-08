@@ -11,21 +11,22 @@ import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
 public class WordCountBolt extends BaseBasicBolt {
-	Map<String, Integer> counts = new HashMap<String, Integer>();
+	private final Map<String, Integer> counts = new HashMap<>();
 
 	@Override
-	public void execute(Tuple tuple, BasicOutputCollector collector) {
-		String word = (String) tuple.getValueByField("word");
+	public void execute(final Tuple tuple, final BasicOutputCollector collector) {
+		final String word = (String) tuple.getValueByField("word");
 		Integer count = counts.get(word);
-		if (count == null)
+		if (count == null) {
 			count = 0;
+		}
 		count++;
 		counts.put(word, count);
 		collector.emit(new Values(word, count));
 	}
 
 	@Override
-	public void declareOutputFields(OutputFieldsDeclarer declarer) {
+	public void declareOutputFields(final OutputFieldsDeclarer declarer) {
 		declarer.declare(new Fields("word", "count"));
 	}
 

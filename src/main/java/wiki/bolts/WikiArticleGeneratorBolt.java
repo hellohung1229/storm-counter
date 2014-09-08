@@ -23,9 +23,9 @@ public class WikiArticleGeneratorBolt extends BaseBasicBolt {
 	BasicOutputCollector collector;
 
 	@Override
-	public void execute(Tuple tuple, BasicOutputCollector collector) {
-		DBObject fileReference = (DBObject) tuple.getValueByField("fileReference");
-		String filePath = PropertyParser.getProperty("wikiDumpsFolderPath") + fileReference.get("filePath");
+	public void execute(final Tuple tuple, final BasicOutputCollector collector) {
+		final DBObject fileReference = (DBObject) tuple.getValueByField("fileReference");
+		final String filePath = PropertyParser.getProperty("wikiDumpsFolderPath") + fileReference.get("filePath");
 
 		final FTPClient ftpClient = new FTPClient();
 		openFTPConnection(ftpClient);
@@ -33,7 +33,7 @@ public class WikiArticleGeneratorBolt extends BaseBasicBolt {
 		closeFTPConnection(ftpClient);
 	}
 
-	private static void openFTPConnection(FTPClient ftpClient) {
+	private static void openFTPConnection(final FTPClient ftpClient) {
 		try {
 			ftpClient.connect(PropertyParser.getProperty("ftpHost"), Integer.parseInt(PropertyParser.getProperty("ftpPort")));
 			ftpClient.login(PropertyParser.getProperty("ftpUser"), PropertyParser.getProperty("ftpPassword"));
@@ -44,30 +44,30 @@ public class WikiArticleGeneratorBolt extends BaseBasicBolt {
 		}
 	}
 
-	private static void closeFTPConnection(FTPClient ftpClient) {
+	private static void closeFTPConnection(final FTPClient ftpClient) {
 		try {
 			ftpClient.disconnect();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
-	private static void emitArticlesFromFTPFile(FTPClient ftpClient, String filePath, BasicOutputCollector collector) {
+
+	private static void emitArticlesFromFTPFile(final FTPClient ftpClient, final String filePath, final BasicOutputCollector collector) {
 		try(InputStream compressedStream = ftpClient.retrieveFileStream(filePath)) {
-			BZip2CompressorInputStream decompressedStream = new BZip2CompressorInputStream(compressedStream);
-			XMLWikiArticleExtractor extractor = new XMLWikiArticleExtractor(decompressedStream);
+			final BZip2CompressorInputStream decompressedStream = new BZip2CompressorInputStream(compressedStream);
+			final XMLWikiArticleExtractor extractor = new XMLWikiArticleExtractor(decompressedStream);
 			WikiArticleModel nextArticle = extractor.extractNextArticle();
 			while (nextArticle != null) {
 				collector.emit(new Values(nextArticle));
 				nextArticle = extractor.extractNextArticle();
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
-	public void declareOutputFields(OutputFieldsDeclarer ofd) {
+	public void declareOutputFields(final OutputFieldsDeclarer ofd) {
 		ofd.declare(new Fields("wikiArticle"));
 	}
 }

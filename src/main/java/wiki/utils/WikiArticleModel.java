@@ -1,19 +1,8 @@
 package wiki.utils;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.io.StringReader;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
-public class WikiArticleModel implements Serializable {
+public final class WikiArticleModel implements Serializable {
 	private String title;
 	private int id;
 	private String content;
@@ -22,7 +11,7 @@ public class WikiArticleModel implements Serializable {
 
 	}
 
-	public WikiArticleModel(String title, int id, String content) {
+	public WikiArticleModel(final String title, final int id, final String content) {
 		this.title = title;
 		this.id = id;
 		this.content = content;
@@ -32,7 +21,7 @@ public class WikiArticleModel implements Serializable {
 		return this.title;
 	}
 
-	public void setTitle(String title) {
+	public void setTitle(final String title) {
 		this.title = title;
 	}
 
@@ -40,7 +29,7 @@ public class WikiArticleModel implements Serializable {
 		return this.id;
 	}
 
-	public void setId(int id) {
+	public void setId(final int id) {
 		this.id = id;
 	}
 
@@ -48,10 +37,11 @@ public class WikiArticleModel implements Serializable {
 		return this.content;
 	}
 
-	public void setContent(String content) {
+	public void setContent(final String content) {
 		this.content = content;
 	}
 
+	@Override
 	public String toString() {
 		return "Title : " + this.title + ", id : " + this.id;
 	}

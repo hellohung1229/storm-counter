@@ -7,27 +7,27 @@ import com.mongodb.MongoClient;
 import common.utils.PropertyParser;
 
 public class MongoDBClient {
-	private String host;
-	private int port;
-	private String databaseName;
-	private String user;
-	private String password;
+	private final String host;
+	private final int port;
+	private final String databaseName;
+	private final String user;
+	private final String password;
 
 	public MongoDBClient() {
-		this.host = (String) PropertyParser.getProperty("mongoHost");
+		this.host = PropertyParser.getProperty("mongoHost");
 		this.port = Integer.parseInt(PropertyParser.getProperty("mongoPort"));
-		this.databaseName = (String) PropertyParser.getProperty("mongoDatabase");
-		this.user = (String) PropertyParser.getProperty("mongoUser");
-		this.password = (String) PropertyParser.getProperty("mongoPassword");
+		this.databaseName = PropertyParser.getProperty("mongoDatabase");
+		this.user = PropertyParser.getProperty("mongoUser");
+		this.password = PropertyParser.getProperty("mongoPassword");
 	}
 
 	public DB connect() {
 		try {
-			MongoClient mongoClient = new MongoClient(host, port);
-			DB database = mongoClient.getDB(this.databaseName);
-			boolean auth = database.authenticate(user, password.toCharArray());
+			final MongoClient mongoClient = new MongoClient(host, port);
+			final DB database = mongoClient.getDB(this.databaseName);
+			final boolean auth = database.authenticate(user, password.toCharArray());
 			return database;
-		} catch (UnknownHostException e) {
+		} catch (final UnknownHostException e) {
 			throw new RuntimeException(e);
 		}
 	}

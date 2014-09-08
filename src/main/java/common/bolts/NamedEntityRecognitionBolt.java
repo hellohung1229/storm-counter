@@ -13,18 +13,18 @@ import backtype.storm.tuple.Tuple;
 public class NamedEntityRecognitionBolt extends BaseBasicBolt {
 
 	@Override
-	public void execute(Tuple tuple, BasicOutputCollector collector) {
-		String inputText = (String) tuple.getValueByField("text");
-		InputStream is = new ByteArrayInputStream(inputText.getBytes());
+	public void execute(final Tuple tuple, final BasicOutputCollector collector) {
+		final String inputText = (String) tuple.getValueByField("text");
+		final InputStream is = new ByteArrayInputStream(inputText.getBytes());
 		try {
-			TokenNameFinderModel model = new TokenNameFinderModel(is);
-		} catch (IOException e) {
+			final TokenNameFinderModel model = new TokenNameFinderModel(is);
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
-	public void declareOutputFields(OutputFieldsDeclarer ofd) {
+	public void declareOutputFields(final OutputFieldsDeclarer ofd) {
 		// TODO Auto-generated method stub
 
 	}

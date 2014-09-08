@@ -27,7 +27,7 @@ public class WikiDumpReferenceSpout extends BaseRichSpout {
 	public void nextTuple() {
 		this.cursor = collection.find();
 		while (this.cursor.hasNext()) {
-			DBObject fileReference = this.cursor.next();
+			final DBObject fileReference = this.cursor.next();
 			if (!this.sentReferences.contains(fileReference)) {
 				this.collector.emit(new Values(fileReference));
 				this.sentReferences.add(fileReference);
@@ -36,17 +36,17 @@ public class WikiDumpReferenceSpout extends BaseRichSpout {
 	}
 
 	@Override
-	public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
+	public void open(final Map conf, final TopologyContext context, final SpoutOutputCollector collector) {
 		this.collector = collector;
 		this.sentReferences = new ArrayList<DBObject>();
 
-		MongoDBClient mongodbClient = new MongoDBClient();
-		DB database = mongodbClient.connect();
+		final MongoDBClient mongodbClient = new MongoDBClient();
+		final DB database = mongodbClient.connect();
 		this.collection = database.getCollection(PropertyParser.getProperty("mongoWikiDumpReferencesCollection"));
 	}
 
 	@Override
-	public void declareOutputFields(OutputFieldsDeclarer ofd) {
+	public void declareOutputFields(final OutputFieldsDeclarer ofd) {
 		ofd.declare(new Fields("fileReference"));
 	}
 }

@@ -13,20 +13,19 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class XMLWikiArticleExtractor {
-	private BufferedReader reader;
+	private final BufferedReader reader;
 
-	public XMLWikiArticleExtractor(InputStream stream) {
+	public XMLWikiArticleExtractor(final InputStream stream) {
 		this.reader = new BufferedReader(new InputStreamReader(stream));
 	}
 
 	public WikiArticleModel extractNextArticle() {
 		final WikiArticleModel article = new WikiArticleModel();
 
-		SAXParserFactory factory = SAXParserFactory.newInstance();
+		final SAXParserFactory factory = SAXParserFactory.newInstance();
 		SAXParser saxParser;
 		try {
 			saxParser = factory.newSAXParser();
@@ -34,13 +33,14 @@ public class XMLWikiArticleExtractor {
 			throw new RuntimeException(e);
 		}
 
-		DefaultHandler handler = new DefaultHandler() {
-			boolean bTitle = false;
-			boolean bId = false;
-			boolean bPageId = false;
-			boolean bContent = false;
+		final DefaultHandler handler = new DefaultHandler() {
+			boolean bTitle;
+			boolean bId ;
+			boolean bPageId ;
+			boolean bContent;
 
-			public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+			@Override
+			public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
 				if (qName.equalsIgnoreCase("title")) {
 					bTitle = true;
 				}
@@ -58,10 +58,12 @@ public class XMLWikiArticleExtractor {
 				}
 			}
 
-			public void endElement(String uri, String localName, String qName) throws SAXException {
+			@Override
+			public void endElement(final String uri, final String localName, final String qName) throws SAXException {
 			}
 
-			public void characters(char ch[], int start, int length) throws SAXException {
+			@Override
+			public void characters(final char ch[], final int start, final int length) throws SAXException {
 
 				if (bTitle) {
 					article.setTitle(new String(ch, start, length));
@@ -78,7 +80,7 @@ public class XMLWikiArticleExtractor {
 			}
 		};
 		try {
-			String source = extractNextArticleSource();
+			final String source = extractNextArticleSource();
 			if (source != null) {
 				saxParser.parse(new InputSource(new StringReader(source)), handler);
 			}
@@ -96,7 +98,7 @@ public class XMLWikiArticleExtractor {
 	private final String extractNextArticleSource() {
 		try {
 			return doExtractNextArticleSource();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -119,6 +121,6 @@ public class XMLWikiArticleExtractor {
 			}
 		}
 		return null; // End of the file, incomplete article source (stopped
-						// before </page>)
+		// before </page>)
 	}
 }

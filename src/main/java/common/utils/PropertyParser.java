@@ -6,12 +6,12 @@ import java.util.Properties;
 
 public class PropertyParser {
 
-	public static String getProperty(String propertyName) {
+	public static String getProperty(final String propertyName) {
 		try (InputStream input = PropertyParser.class.getClassLoader().getResourceAsStream("config.properties")) {
-			Properties properties = new Properties();
+			final Properties properties = new Properties();
 			properties.load(input);
 			return properties.getProperty(propertyName);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}

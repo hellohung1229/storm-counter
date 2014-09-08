@@ -12,36 +12,37 @@ import opennlp.tools.util.Span;
 public class NLPTools {
 	public static enum namedEntities {
 		PERSONS("en-ner-person.bin");
-		
-		private String path;
-		
-		namedEntities(String path) {
+
+		private final String path;
+
+		namedEntities(final String path) {
 			this.path = path;
 		}
-		
+
+		@Override
 		public String toString() {
 			return path;
 		}
 	}
-	
-	public static final String[] detectSentences (String inputText) {
+
+	public static final String[] detectSentences (final String inputText) {
 		try (final InputStream modelIn = NLPTools.class.getClassLoader().getResourceAsStream("NLP Models/en-sent.bin")) {
-			SentenceModel model = new SentenceModel(modelIn);
-			SentenceDetectorME  sentenceDetector = new SentenceDetectorME (model);
+			final SentenceModel model = new SentenceModel(modelIn);
+			final SentenceDetectorME  sentenceDetector = new SentenceDetectorME (model);
 			return sentenceDetector.sentDetect(inputText);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
-	public static final Span[] detectNamedEntity (namedEntities entity, String[] sentence) {
+
+	public static final Span[] detectNamedEntity (final namedEntities entity, final String[] sentence) {
 		try (final InputStream modelIn = NLPTools.class.getClassLoader().getResourceAsStream("NLP Models/" + entity.toString())) {
-			TokenNameFinderModel  model = new TokenNameFinderModel (modelIn);
-			NameFinderME  nameFinder  = new NameFinderME (model);
-			Span[] names = nameFinder.find(sentence);
+			final TokenNameFinderModel  model = new TokenNameFinderModel (modelIn);
+			final NameFinderME  nameFinder  = new NameFinderME (model);
+			final Span[] names = nameFinder.find(sentence);
 			nameFinder.clearAdaptiveData();
 			return names;
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
