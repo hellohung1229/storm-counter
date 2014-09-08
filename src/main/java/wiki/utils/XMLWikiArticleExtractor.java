@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -23,15 +22,17 @@ public final class XMLWikiArticleExtractor {
 	}
 
 	public WikiArticleModel extractNextArticle() {
+		try {
+			return doExtractNextArticle();
+		} catch (final Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	private WikiArticleModel doExtractNextArticle() throws Exception {
 		final WikiArticleModel article = new WikiArticleModel();
 
 		final SAXParserFactory factory = SAXParserFactory.newInstance();
-		SAXParser saxParser;
-		try {
-			saxParser = factory.newSAXParser();
-		} catch (ParserConfigurationException | SAXException e) {
-			throw new RuntimeException(e);
-		}
+		final SAXParser saxParser = factory.newSAXParser();
 
 		final DefaultHandler handler = new DefaultHandler() {
 			boolean bTitle;
@@ -79,14 +80,11 @@ public final class XMLWikiArticleExtractor {
 				}
 			}
 		};
-		try {
-			final String source = extractNextArticleSource();
-			if (source != null) {
-				saxParser.parse(new InputSource(new StringReader(source)), handler);
-			}
-		} catch (SAXException | IOException e) {
-			throw new RuntimeException(e);
+		final String source = extractNextArticleSource();
+		if (source != null) {
+			saxParser.parse(new InputSource(new StringReader(source)), handler);
 		}
+
 		if (article.getTitle() != null) {
 			return article;
 		} else {
@@ -95,15 +93,8 @@ public final class XMLWikiArticleExtractor {
 
 	}
 
-	private final String extractNextArticleSource() {
-		try {
-			return doExtractNextArticleSource();
-		} catch (final IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
 
-	private final String doExtractNextArticleSource() throws IOException {
+	private final String extractNextArticleSource() throws IOException {
 		String line;
 		String partialSource = "";
 		Boolean articleStarted = false;
