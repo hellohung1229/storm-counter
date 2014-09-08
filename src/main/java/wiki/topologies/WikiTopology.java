@@ -10,10 +10,10 @@ import backtype.storm.generated.AlreadyAliveException;
 import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
-import commons.bolts.ConsolePrintBolt;
-import commons.bolts.TextSplitToWordsBolt;
-import commons.bolts.WordCountBolt;
-import commons.bolts.WordFilterBolt;
+import common.bolts.ConsolePrintBolt;
+import common.bolts.TextSplitToWordsBolt;
+import common.bolts.WordCountBolt;
+import common.bolts.WordFilterBolt;
 
 public class WikiTopology {
 	public static void main(String[] args) {

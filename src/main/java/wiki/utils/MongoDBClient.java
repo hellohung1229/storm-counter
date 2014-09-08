@@ -4,6 +4,7 @@ import java.net.UnknownHostException;
 
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
+import common.utils.PropertyParser;
 
 public class MongoDBClient {
 	private String host;

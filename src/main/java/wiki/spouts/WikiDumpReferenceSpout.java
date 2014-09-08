@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import wiki.utils.MongoDBClient;
-import wiki.utils.PropertyParser;
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -17,6 +16,7 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import common.utils.PropertyParser;
 
 public class WikiDumpReferenceSpout extends BaseRichSpout {
 	private SpoutOutputCollector collector;

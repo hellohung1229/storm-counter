@@ -7,7 +7,6 @@ import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 
-import wiki.utils.PropertyParser;
 import wiki.utils.WikiArticleModel;
 import wiki.utils.XMLWikiArticleExtractor;
 import backtype.storm.topology.BasicOutputCollector;
@@ -18,6 +17,7 @@ import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
 import com.mongodb.DBObject;
+import common.utils.PropertyParser;
 
 public class WikiArticleGeneratorBolt extends BaseBasicBolt {
 	BasicOutputCollector collector;
