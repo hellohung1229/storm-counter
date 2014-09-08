@@ -1,4 +1,4 @@
-package klee.storm.wiki.utils;
+package wiki.utils;
 
 import java.io.IOException;
 import java.io.Serializable;

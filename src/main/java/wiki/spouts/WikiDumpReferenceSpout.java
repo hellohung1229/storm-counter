@@ -1,11 +1,11 @@
-package klee.storm.wiki.spouts;
+package wiki.spouts;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import klee.storm.wiki.utils.MongoDBClient;
-import klee.storm.wiki.utils.PropertyParser;
+import wiki.utils.MongoDBClient;
+import wiki.utils.PropertyParser;
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;

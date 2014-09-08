@@ -1,15 +1,15 @@
-package klee.storm.wiki.bolts;
+package wiki.bolts;
 
 import java.io.IOException;
+import java.io.InputStream;
 
-import klee.storm.wiki.utils.PropertyParser;
-import klee.storm.wiki.utils.WikiArticleModel;
-import klee.storm.wiki.utils.XMLWikiArticleExtractor;
-
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
-import org.itadaki.bzip2.BZip2InputStream;
 
+import wiki.utils.PropertyParser;
+import wiki.utils.WikiArticleModel;
+import wiki.utils.XMLWikiArticleExtractor;
 import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseBasicBolt;
@@ -50,9 +50,10 @@ public class WikiArticleGeneratorBolt extends BaseBasicBolt {
 			throw new RuntimeException(e);
 		}
 	}
-
+	
 	private static void emitArticlesFromFTPFile(FTPClient ftpClient, String filePath, BasicOutputCollector collector) {
-		try (final BZip2InputStream decompressedStream = new BZip2InputStream(ftpClient.retrieveFileStream(filePath), false)) {
+		try(InputStream compressedStream = ftpClient.retrieveFileStream(filePath)) {
+			BZip2CompressorInputStream decompressedStream = new BZip2CompressorInputStream(compressedStream);
 			XMLWikiArticleExtractor extractor = new XMLWikiArticleExtractor(decompressedStream);
 			WikiArticleModel nextArticle = extractor.extractNextArticle();
 			while (nextArticle != null) {

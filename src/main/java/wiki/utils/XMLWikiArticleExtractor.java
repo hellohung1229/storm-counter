@@ -1,4 +1,4 @@
-package klee.storm.wiki.utils;
+package wiki.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;

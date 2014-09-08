@@ -1,4 +1,4 @@
-package klee.storm.wiki.bolts;
+package commons.bolts;
 
 import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;

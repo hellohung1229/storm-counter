@@ -1,14 +1,15 @@
-package klee.storm.wiki.topologies;
+package wiki.topologies;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import klee.storm.wiki.bolts.ConsolePrintBolt;
-import klee.storm.wiki.bolts.WikiArticleGeneratorBolt;
-import klee.storm.wiki.spouts.WikiDumpReferenceSpout;
+import wiki.bolts.WikiArticleGeneratorBolt;
+import wiki.spouts.WikiDumpReferenceSpout;
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.topology.TopologyBuilder;
+
+import commons.bolts.ConsolePrintBolt;
 
 public class LocalTopology {
 	public static void main(String[] args) {
