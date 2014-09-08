@@ -27,32 +27,29 @@ public final class WikiArticleGeneratorBolt extends BaseBasicBolt {
 		final DBObject fileReference = (DBObject) tuple.getValueByField("fileReference");
 		final String filePath = PropertyUtil.getProperty("wikiDumpsFolderPath") + fileReference.get("filePath");
 
-		final FTPClient ftpClient = new FTPClient();
-		openFTPConnection(ftpClient);
-		emitArticlesFromFTPFile(ftpClient, filePath, collector);
-		closeFTPConnection(ftpClient);
-	}
-
-	private static void openFTPConnection(final FTPClient ftpClient) {
 		try {
-			ftpClient.connect(PropertyUtil.getProperty("ftpHost"), Integer.parseInt(PropertyUtil.getProperty("ftpPort")));
-			ftpClient.login(PropertyUtil.getProperty("ftpUser"), PropertyUtil.getProperty("ftpPassword"));
-			ftpClient.enterLocalPassiveMode();
-			ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+			final FTPClient ftpClient = new FTPClient();
+			try {
+				openFTPConnection(ftpClient);
+				emitArticlesFromFTPFile(ftpClient, filePath, collector);
+			}finally{
+				ftpClient.disconnect();
+			}
 		} catch (NumberFormatException | IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	private static void closeFTPConnection(final FTPClient ftpClient) {
-		try {
-			ftpClient.disconnect();
-		} catch (final IOException e) {
-			throw new RuntimeException(e);
-		}
+	private static void openFTPConnection(final FTPClient ftpClient) throws NumberFormatException, IOException {
+		ftpClient.connect(PropertyUtil.getProperty("ftpHost"), Integer.parseInt(PropertyUtil.getProperty("ftpPort")));
+		ftpClient.login(PropertyUtil.getProperty("ftpUser"), PropertyUtil.getProperty("ftpPassword"));
+		ftpClient.enterLocalPassiveMode();
+		ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 	}
 
-	private static void emitArticlesFromFTPFile(final FTPClient ftpClient, final String filePath, final BasicOutputCollector collector) {
+
+
+	private static void emitArticlesFromFTPFile(final FTPClient ftpClient, final String filePath, final BasicOutputCollector collector) throws IOException {
 		try(InputStream compressedStream = ftpClient.retrieveFileStream(filePath)) {
 			final BZip2CompressorInputStream decompressedStream = new BZip2CompressorInputStream(compressedStream);
 			final XMLWikiArticleExtractor extractor = new XMLWikiArticleExtractor(decompressedStream);
@@ -61,8 +58,6 @@ public final class WikiArticleGeneratorBolt extends BaseBasicBolt {
 				collector.emit(new Values(nextArticle));
 				nextArticle = extractor.extractNextArticle();
 			}
-		} catch (final IOException e) {
-			throw new RuntimeException(e);
 		}
 	}
 
