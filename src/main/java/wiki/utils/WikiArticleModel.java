@@ -7,16 +7,6 @@ public final class WikiArticleModel implements Serializable {
 	private int id;
 	private String content;
 
-	public WikiArticleModel() {
-
-	}
-
-	public WikiArticleModel(final String title, final int id, final String content) {
-		this.title = title;
-		this.id = id;
-		this.content = content;
-	}
-
 	public String getTitle() {
 		return this.title;
 	}
