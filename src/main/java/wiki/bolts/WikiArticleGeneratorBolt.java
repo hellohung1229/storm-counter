@@ -19,7 +19,7 @@ import backtype.storm.tuple.Values;
 import com.mongodb.DBObject;
 import common.utils.PropertyUtil;
 
-public class WikiArticleGeneratorBolt extends BaseBasicBolt {
+public final class WikiArticleGeneratorBolt extends BaseBasicBolt {
 	BasicOutputCollector collector;
 
 	@Override

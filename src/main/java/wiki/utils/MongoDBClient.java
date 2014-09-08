@@ -6,7 +6,7 @@ import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import common.utils.PropertyUtil;
 
-public class MongoDBClient {
+public final class MongoDBClient {
 	private final String host;
 	private final int port;
 	private final String databaseName;

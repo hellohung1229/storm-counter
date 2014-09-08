@@ -15,7 +15,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class XMLWikiArticleExtractor {
+public final class XMLWikiArticleExtractor {
 	private final BufferedReader reader;
 
 	public XMLWikiArticleExtractor(final InputStream stream) {
@@ -41,7 +41,7 @@ public class XMLWikiArticleExtractor {
 
 			@Override
 			public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
-				if (qName.equalsIgnoreCase("title")) {
+				if ("title".equalsIgnoreCase(qName)) {
 					bTitle = true;
 				}
 				if (qName.equalsIgnoreCase("id") && bPageId) {

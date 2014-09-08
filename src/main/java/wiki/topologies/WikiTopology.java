@@ -16,7 +16,7 @@ import common.bolts.TextSplitToWordsBolt;
 import common.bolts.WordCountBolt;
 import common.bolts.WordFilterBolt;
 
-public class WikiTopology {
+public final class WikiTopology {
 	public static void main(final String[] args) {
 		final TopologyBuilder builder = new TopologyBuilder();
 		builder.setSpout("wikiDumpReferenceSpout", new WikiDumpReferenceSpout(), 1);

@@ -15,7 +15,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
-public class WikiDumpReferenceSpout extends BaseRichSpout {
+public final class WikiDumpReferenceSpout extends BaseRichSpout {
 	private SpoutOutputCollector collector;
 	private DBCollection collection;
 	private DBCursor cursor;
