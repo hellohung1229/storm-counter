@@ -17,7 +17,7 @@ import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
 import com.mongodb.DBObject;
-import common.utils.PropertyParser;
+import common.utils.PropertyUtil;
 
 public class WikiArticleGeneratorBolt extends BaseBasicBolt {
 	BasicOutputCollector collector;
@@ -25,7 +25,7 @@ public class WikiArticleGeneratorBolt extends BaseBasicBolt {
 	@Override
 	public void execute(final Tuple tuple, final BasicOutputCollector collector) {
 		final DBObject fileReference = (DBObject) tuple.getValueByField("fileReference");
-		final String filePath = PropertyParser.getProperty("wikiDumpsFolderPath") + fileReference.get("filePath");
+		final String filePath = PropertyUtil.getProperty("wikiDumpsFolderPath") + fileReference.get("filePath");
 
 		final FTPClient ftpClient = new FTPClient();
 		openFTPConnection(ftpClient);
@@ -35,8 +35,8 @@ public class WikiArticleGeneratorBolt extends BaseBasicBolt {
 
 	private static void openFTPConnection(final FTPClient ftpClient) {
 		try {
-			ftpClient.connect(PropertyParser.getProperty("ftpHost"), Integer.parseInt(PropertyParser.getProperty("ftpPort")));
-			ftpClient.login(PropertyParser.getProperty("ftpUser"), PropertyParser.getProperty("ftpPassword"));
+			ftpClient.connect(PropertyUtil.getProperty("ftpHost"), Integer.parseInt(PropertyUtil.getProperty("ftpPort")));
+			ftpClient.login(PropertyUtil.getProperty("ftpUser"), PropertyUtil.getProperty("ftpPassword"));
 			ftpClient.enterLocalPassiveMode();
 			ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 		} catch (NumberFormatException | IOException e) {

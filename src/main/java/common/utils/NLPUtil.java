@@ -9,7 +9,7 @@ import opennlp.tools.sentdetect.SentenceDetectorME;
 import opennlp.tools.sentdetect.SentenceModel;
 import opennlp.tools.util.Span;
 
-public class NLPTools {
+public final class NLPUtil {
 	public static enum namedEntities {
 		PERSONS("en-ner-person.bin");
 
@@ -24,9 +24,11 @@ public class NLPTools {
 			return path;
 		}
 	}
-
+	private NLPUtil(){
+		//util
+	}
 	public static final String[] detectSentences (final String inputText) {
-		try (final InputStream modelIn = NLPTools.class.getClassLoader().getResourceAsStream("NLP Models/en-sent.bin")) {
+		try (final InputStream modelIn = NLPUtil.class.getClassLoader().getResourceAsStream("NLP Models/en-sent.bin")) {
 			final SentenceModel model = new SentenceModel(modelIn);
 			final SentenceDetectorME  sentenceDetector = new SentenceDetectorME (model);
 			return sentenceDetector.sentDetect(inputText);
@@ -36,7 +38,7 @@ public class NLPTools {
 	}
 
 	public static final Span[] detectNamedEntity (final namedEntities entity, final String[] sentence) {
-		try (final InputStream modelIn = NLPTools.class.getClassLoader().getResourceAsStream("NLP Models/" + entity.toString())) {
+		try (final InputStream modelIn = NLPUtil.class.getClassLoader().getResourceAsStream("NLP Models/" + entity.toString())) {
 			final TokenNameFinderModel  model = new TokenNameFinderModel (modelIn);
 			final NameFinderME  nameFinder  = new NameFinderME (model);
 			final Span[] names = nameFinder.find(sentence);

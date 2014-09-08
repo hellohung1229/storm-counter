@@ -15,8 +15,7 @@ public class NamedEntityRecognitionBolt extends BaseBasicBolt {
 	@Override
 	public void execute(final Tuple tuple, final BasicOutputCollector collector) {
 		final String inputText = (String) tuple.getValueByField("text");
-		final InputStream is = new ByteArrayInputStream(inputText.getBytes());
-		try {
+		try (final InputStream is = new ByteArrayInputStream(inputText.getBytes())){
 			final TokenNameFinderModel model = new TokenNameFinderModel(is);
 		} catch (final IOException e) {
 			throw new RuntimeException(e);

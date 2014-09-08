@@ -4,7 +4,7 @@ import java.net.UnknownHostException;
 
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
-import common.utils.PropertyParser;
+import common.utils.PropertyUtil;
 
 public class MongoDBClient {
 	private final String host;
@@ -14,11 +14,11 @@ public class MongoDBClient {
 	private final String password;
 
 	public MongoDBClient() {
-		this.host = PropertyParser.getProperty("mongoHost");
-		this.port = Integer.parseInt(PropertyParser.getProperty("mongoPort"));
-		this.databaseName = PropertyParser.getProperty("mongoDatabase");
-		this.user = PropertyParser.getProperty("mongoUser");
-		this.password = PropertyParser.getProperty("mongoPassword");
+		this.host = PropertyUtil.getProperty("mongoHost");
+		this.port = Integer.parseInt(PropertyUtil.getProperty("mongoPort"));
+		this.databaseName = PropertyUtil.getProperty("mongoDatabase");
+		this.user = PropertyUtil.getProperty("mongoUser");
+		this.password = PropertyUtil.getProperty("mongoPassword");
 	}
 
 	public DB connect() {
