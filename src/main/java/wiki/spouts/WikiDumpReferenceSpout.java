@@ -35,6 +35,7 @@ public class WikiDumpReferenceSpout extends BaseRichSpout {
 		}
 	}
 
+	@Override
 	public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
 		this.collector = collector;
 		this.sentReferences = new ArrayList<DBObject>();
@@ -44,6 +45,7 @@ public class WikiDumpReferenceSpout extends BaseRichSpout {
 		this.collection = database.getCollection(PropertyParser.getProperty("mongoWikiDumpReferencesCollection"));
 	}
 
+	@Override
 	public void declareOutputFields(OutputFieldsDeclarer ofd) {
 		ofd.declare(new Fields("fileReference"));
 	}

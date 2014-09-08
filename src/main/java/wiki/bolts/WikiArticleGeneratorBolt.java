@@ -22,6 +22,7 @@ import com.mongodb.DBObject;
 public class WikiArticleGeneratorBolt extends BaseBasicBolt {
 	BasicOutputCollector collector;
 
+	@Override
 	public void execute(Tuple tuple, BasicOutputCollector collector) {
 		DBObject fileReference = (DBObject) tuple.getValueByField("fileReference");
 		String filePath = PropertyParser.getProperty("wikiDumpsFolderPath") + fileReference.get("filePath");
@@ -65,6 +66,7 @@ public class WikiArticleGeneratorBolt extends BaseBasicBolt {
 		}
 	}
 
+	@Override
 	public void declareOutputFields(OutputFieldsDeclarer ofd) {
 		ofd.declare(new Fields("wikiArticle"));
 	}
