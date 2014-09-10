@@ -12,7 +12,7 @@ public final class WordFilterBolt extends BaseBasicBolt {
 	@Override
 	public void execute(final Tuple tuple, final BasicOutputCollector collector) {
 		final String inputText = (String) tuple.getValueByField("word");
-		if (inputText.matches(".*Paris.*")) {
+		if (inputText.matches(".*potato.*")) {
 			collector.emit(new Values(inputText));
 		}
 	}

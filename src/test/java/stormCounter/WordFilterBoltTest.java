@@ -17,7 +17,7 @@ public class WordFilterBoltTest {
 		// Arrange
 		final WordFilterBolt bolt = new WordFilterBolt();
 		final Tuple firstMockedTuple = createMockedTuple("foo");
-		final Tuple secondMockedTuple = createMockedTuple("Parisien");
+		final Tuple secondMockedTuple = createMockedTuple("potatos");
 		final Tuple thirdMockedTuple = createMockedTuple("bar");
 		final BasicOutputCollector mockedOutputCollector=  createMockedOutputCollector();
 		final InOrder inOrderChecker = Mockito.inOrder(mockedOutputCollector);
@@ -28,7 +28,7 @@ public class WordFilterBoltTest {
 		bolt.execute(thirdMockedTuple, mockedOutputCollector);
 		
 		// Assert
-		inOrderChecker.verify(mockedOutputCollector).emit(new Values("Parisien"));
+		inOrderChecker.verify(mockedOutputCollector).emit(new Values("potatos"));
 		inOrderChecker.verifyNoMoreInteractions();
 		
 	}
