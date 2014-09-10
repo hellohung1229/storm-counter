@@ -29,7 +29,7 @@ public final class WikiDumpReferenceSpout extends BaseRichSpout {
 		while (this.cursor.hasNext()) {
 			final DBObject fileReference = this.cursor.next();
 			if (!this.sentReferences.contains(fileReference)) {
-				this.collector.emit(new Values(fileReference));
+				this.collector.emit(new Values(fileReference.get("filePath")));
 				this.sentReferences.add(fileReference);
 			}
 		}

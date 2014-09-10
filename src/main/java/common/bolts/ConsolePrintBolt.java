@@ -7,12 +7,15 @@ import backtype.storm.tuple.Tuple;
 
 public final class ConsolePrintBolt extends BaseBasicBolt {
 	@Override
-	public void execute(final Tuple tuple, final BasicOutputCollector collector) {
-		System.out.println(tuple);
+	public final void execute(final Tuple tuple, final BasicOutputCollector collector) {
+		print(tuple.toString());
+	}
+	
+	public final void print(String message) {
+		System.out.println(message);
 	}
 
 	@Override
-	public void declareOutputFields(final OutputFieldsDeclarer ofd) {
-
+	public final void declareOutputFields(final OutputFieldsDeclarer ofd) {
 	}
 }

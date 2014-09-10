@@ -5,6 +5,7 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
+import backtype.storm.tuple.Values;
 
 public final class WordFilterBolt extends BaseBasicBolt {
 
@@ -12,7 +13,7 @@ public final class WordFilterBolt extends BaseBasicBolt {
 	public void execute(final Tuple tuple, final BasicOutputCollector collector) {
 		final String inputText = (String) tuple.getValueByField("word");
 		if (inputText.matches(".*Paris.*")) {
-			collector.emit(tuple.getValues());
+			collector.emit(new Values(inputText));
 		}
 	}
 

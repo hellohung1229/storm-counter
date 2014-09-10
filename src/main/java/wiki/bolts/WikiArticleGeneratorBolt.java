@@ -16,7 +16,6 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
-import com.mongodb.DBObject;
 import common.utils.PropertyUtil;
 
 public final class WikiArticleGeneratorBolt extends BaseBasicBolt {
@@ -24,8 +23,8 @@ public final class WikiArticleGeneratorBolt extends BaseBasicBolt {
 
 	@Override
 	public void execute(final Tuple tuple, final BasicOutputCollector collector) {
-		final DBObject fileReference = (DBObject) tuple.getValueByField("fileReference");
-		final String filePath = PropertyUtil.getProperty("wikiDumpsFolderPath") + fileReference.get("filePath");
+		final String fileReference = (String) tuple.getValueByField("fileReference");
+		final String filePath = PropertyUtil.getProperty("wikiDumpsFolderPath") + fileReference;
 
 		try {
 			final FTPClient ftpClient = new FTPClient();
