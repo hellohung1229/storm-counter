@@ -13,10 +13,10 @@ import common.spouts.RandomTextSpout;
 
 public class NLPExperimentationTopology {
 	public static void main(final String[] args) throws Exception {
-
 		final StormTopology topology= createTopology();
 
 		final Config conf = new Config();
+		conf.setDebug(true);
 
 		if (args != null && args.length > 0) {
 			conf.setNumWorkers(7);
@@ -31,9 +31,9 @@ public class NLPExperimentationTopology {
 		final TopologyBuilder builder = new TopologyBuilder();
 		builder.setSpout("randomTextSpout", new RandomTextSpout(), 1);
 		
-		builder.setBolt("sentenceSplitterBolt", new SentenceSplitBolt(), 2).shuffleGrouping("randomTextSpout");
-		builder.setBolt("namedEntityRecognitionBolt", new NamedEntitiesRecognitionBolt(),2).shuffleGrouping("sentenceSplitterBolt");
-		builder.setBolt("consolePrintBolt", new ConsolePrintBolt(), 2).shuffleGrouping("namedEntityRecognitionBolt");
+		builder.setBolt("sentenceSplitterBolt", new SentenceSplitBolt(), 4).shuffleGrouping("randomTextSpout");
+		builder.setBolt("namedEntityRecognitionBolt", new NamedEntitiesRecognitionBolt(),16).shuffleGrouping("sentenceSplitterBolt");
+		builder.setBolt("consolePrintBolt", new ConsolePrintBolt(), 1).shuffleGrouping("namedEntityRecognitionBolt");
 		return builder.createTopology();
 	}
 }
