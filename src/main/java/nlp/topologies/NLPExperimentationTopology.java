@@ -7,10 +7,8 @@ import backtype.storm.LocalCluster;
 import backtype.storm.StormSubmitter;
 import backtype.storm.generated.StormTopology;
 import backtype.storm.topology.TopologyBuilder;
-import backtype.storm.tuple.Fields;
 
 import common.bolts.ConsolePrintBolt;
-import common.bolts.WordCountBolt;
 import common.spouts.RandomTextSpout;
 
 public class NLPExperimentationTopology {
