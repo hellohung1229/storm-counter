@@ -1,22 +1,86 @@
 (function() {
-	var width = 960;
-	var height = 500;
-	var svg = d3.select("body").append("svg")
-    .attr("width", width)
-    .attr("height", height);
-	
-	var nodes = [
-		{x:50, y:100},
-		{x:100, y:300},
-		{x:150, y:100},
-		{x:200, y:100}
-	];
-	
-	var links = [
-		{source:1,
-		target:2,
-		weight:1}
-	];
+	var engine = {
+		init: function() {
+			var width = 960;
+			var height = 500;
+			var svg = d3.select("body").append("svg")
+				.attr("width", width)
+				.attr("height", height);
+				
+			this.nodes = [
+				{
+					id:1,
+					name:"node1"
+				},
+				{
+					id:2,
+					name:"node2"
+				},
+				{
+					id:3,
+					name:"node3"
+				},
+				{
+					id:4,
+					name:"node4"
+				}
+			];
+			
+			this.links = [
+				{
+					sourceId:1,
+					targetId:2
+				},
+				{
+					sourceId:1,
+					targetId:3
+				},
+				{
+					sourceId:3
+					targetId:4
+				}
+			];
+		},
+		setLevelsToNodes: function() {
+			setLevelToSingleNode(nodes[0], 1);
+		},
+		setLevelToSingleNode: function(node, level) {
+			if (node.level === undefined) {
+				node.level = level;
+				getParents(node).forEach(function(parent) {
+					setLevelToSingleNode(parent, level - 1);
+				});
+				getChildren(node).forEach(function(child) {
+					setLevelToSingleNode(child, level + 1);
+				});
+			}
+		},
+		getChildren: function(node) {
+			var children = [];
+			links.forEach(function(link) {
+				if (link.sourceId === node.id) {
+					children.push(getNodeById(link.targetId));
+				}
+			});
+			return children;
+		},
+		getParents: function(node) {
+			var parents = [];
+			links.forEach(function(link) {
+				if (link.targetId === node.id) {
+					parents.push(getNodeById(link.sourceId));
+				}
+			});
+			return parents;
+		},
+		getNodeById: function(id) {
+			nodes.forEach(function(node) {
+				if (node.id === id) {
+					return node;
+				}
+			});
+		}
+	};
 	
 	var link = svg.selectAll("line")
 		.data(links);
@@ -39,10 +103,4 @@
 		.transition()
 		.attr("r",20);
 	
-	setTimeout(function() {
-		nodes.push({x:300,y:100});
-		circle.enter();
-		circle.transition()
-			.attr("r",10);
-	}, 3000);
 })();
