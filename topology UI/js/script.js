@@ -1,22 +1,22 @@
 (function() {
 	var engine = {
 		svgAttributes: {},
-		init: function(width, height, nodes, links) {
-			this.nodes = nodes;
-			this.links = links;
-			this.svgAttributes.width = width;
-			this.svgAttributes.height = height;
+		init: function(width, height, topology) {
+			engine.topology = topology;
+			engine.svgAttributes.width = width;
+			engine.svgAttributes.height = height;
 			var svg = d3.select(".container").append("svg")
 				.attr("width", width)
 				.attr("height", height);
 		
 			engine.topologyFormater.mapNodesOnCanva();
-			engine.canvaDrawer.drawTopology(engine.nodes, engine.links);
+			engine.refreshDisplay(engine.topology);
+			engine.animateDisplay();
 		},
 		topologyFormater: {
 			getNodeById: function(id) {
 				var targetNode;
-				engine.nodes.forEach(function(node) {
+				engine.topology.nodes.forEach(function(node) {
 					if (node.id === id) {
 						targetNode = node;
 					}
@@ -25,7 +25,7 @@
 			},
 			getNodesPerLevel: function(level) {
 				var nodes = [];
-				engine.nodes.forEach(function(node) {
+				engine.topology.nodes.forEach(function(node) {
 					if (node.level === level) {
 						nodes.push(node);
 					}
@@ -46,7 +46,7 @@
 			getLevelsCount: function() {
 				var minLevel = 1;
 				var maxLevel = 1;
-				engine.nodes.forEach(function(node) {
+				engine.topology.nodes.forEach(function(node) {
 					if (node.level < minLevel) {
 						minLevel = node.level;
 					}
@@ -60,154 +60,151 @@
 				node.coordinates = {x:x, y:y};
 			}
 		},
-		canvaDrawer: {
-			drawTopology: function(nodes, links) {
-				this.drawLinks(links);
-				this.drawNodes(nodes);
-			},
-			drawLinks: function(links) {
-				var svg = d3.select("svg");
-				var line = svg.selectAll("line")
-					.data(links);
-					
-				line.enter().append("line")
-					.attr("x1", function(d) {return engine.topologyFormater.getNodeById(d.sourceId).coordinates.x})
-					.attr("y1", function(d) {return engine.topologyFormater.getNodeById(d.sourceId).coordinates.y})
-					.attr("x2", function(d) {return engine.topologyFormater.getNodeById(d.targetId).coordinates.x})
-					.attr("y2", function(d) {return engine.topologyFormater.getNodeById(d.targetId).coordinates.y})
-					.style("stroke", "steelblue");
-			},
-			drawNodes: function(nodes) {
-				var svg = d3.select("svg");
-								
-				var node = svg.selectAll("node")
-					.data(nodes);
-				
-				var nodeEnter = node.enter()
-					.append("g");
-					
-				var outterCircle = nodeEnter.append("circle")
-					.attr("cx", function(d) {return d.coordinates.x;})
-					.attr("cy", function(d) {return d.coordinates.y;})
-					.attr("r", 0)
-					.style("fill", "steelblue")
-					.transition()
-					.attr("r",50);
-				
-				var innerCircle = nodeEnter.append("circle")
-					.attr("cx", function(d) {return d.coordinates.x;})
-					.attr("cy", function(d) {return d.coordinates.y;})
-					.attr("r", 0)
-					.style("fill", "grey")
-					.transition()
-					.attr("r",40);
-				
-				nodeEnter.append("text")
-					.attr("x", function(d) {return d.coordinates.x;})
-					.attr("y", function(d) {return d.coordinates.y;})
-					.attr("font-family", "FontAwesome")
-					.attr("font-size", function(d) { return "2em"} )
-					.attr("text-anchor", "middle")
-					.text(function(d) { return d.icon })
-				
-				
-				
+		refreshDisplay: function(topology) {
+			engine.topology = topology;
+			var svg = d3.select("svg");
+			var tooltip = d3.select("#tooltip");
+			if (tooltip.empty()) {
+				tooltip = d3.select("body")
+					.append("div")
+					.style("position", "absolute")
+					.style("z-index", "10")
+					.style("visibility", "hidden")
+					.style("background-color", "#f0fcff")
+					.style("box-shadow", "0px 0px 13px 1px #888888")
+					.style("padding", "10px")
+					.attr("id", "tooltip")
+					.text("Test de text");
 			}
+			
+			// Data JOIN
+			var link = svg.selectAll("link")
+				.data(engine.topology.links);
+			var node = svg.selectAll("g")
+				.data(engine.topology.nodes);
+			
+			//ENTER
+			var linkEnter = link.enter();
+			linkEnter.append("line")
+				.attr("x1", function(d) {return engine.topologyFormater.getNodeById(d.sourceId).coordinates.x})
+				.attr("y1", function(d) {return engine.topologyFormater.getNodeById(d.sourceId).coordinates.y})
+				.attr("x2", function(d) {return engine.topologyFormater.getNodeById(d.targetId).coordinates.x})
+				.attr("y2", function(d) {return engine.topologyFormater.getNodeById(d.targetId).coordinates.y})
+				.style("stroke", "steelblue")
+				.style("stroke-width", "3")
+				.style("opacity", "0")
+				.transition()
+				.style("opacity", "1");
+			
+			var nodeEnter = node.enter().append("g");
+			nodeEnter.append("circle")
+				.attr("cx", function(d) {return d.coordinates.x;})
+				.attr("cy", function(d) {return d.coordinates.y;})
+				.attr("r", 0)
+				.classed("outter", true)
+				.style("fill", "steelblue")
+				.transition()
+				.attr("r",50)
+				
+			nodeEnter.append("circle")
+				.on("mouseover", function(d) {
+					d3.select(this).style("fill", "#E8DDCC");
+					tooltip.style("visibility", "visible");
+					tooltip.text(d.name);
+				})
+				.on("mousemove", function(){
+					tooltip.style("top",(d3.event.pageY-10)+"px").style("left",(d3.event.pageX+20)+"px");
+				})
+				.on("mouseout", function(d) {
+					tooltip.style("visibility", "hidden");
+					d3.select(this).style("fill", "#FCF3E6");
+				})
+				.attr("cx", function(d) {return d.coordinates.x;})
+				.attr("cy", function(d) {return d.coordinates.y;})
+				.attr("r", 0)
+				.classed("inner", true)
+				.style("fill", "#FCF3E6")
+				.transition()
+				.attr("r",40);					
+				
+			nodeEnter.append("text")
+				.attr("x", function(d) {return d.coordinates.x;})
+				.attr("y", function(d) {return d.coordinates.y;})
+				.attr("dy", ".3em")
+				.attr("font-family", "FontAwesome")
+				.attr("font-size", function(d) { return "2em"} )
+				.attr("text-anchor", "middle")
+				.text(function(d) { return d.icon })
+				.style("opacity", "0")
+				.transition()
+				.style("opacity", "1");
+			
+			// ENTER+UPDATE
+			node.attr("class", function(d) {return d.status;});
+			link.attr("class", function(d) {return d.status;});
+			
+			// EXIT
+			link.exit().remove();
+			node.exit().remove();
+		},
+		animateDisplay: function() {	
+			setInterval(function() {
+				var svg = d3.select("svg");
+				var errorNode = svg.selectAll("g").filter(".error");
+				var errorLink = svg.selectAll("line").filter(".error");
+				var inactiveNode = svg.selectAll("g").filter(".inactive");
+				errorNode.selectAll("circle")
+					.filter(".outter")
+					.style("fill", "#E01616");
+				
+				errorNode.selectAll("circle")
+					.transition()
+					.duration(400)
+					.attr("r", function() {
+						return (1.1 * d3.select(this).attr("r"));
+					})
+					.transition()
+					.delay(400)
+					.attr("r", function() {
+						return (d3.select(this).attr("r"));
+					});
+					
+				errorLink.style("stroke", "#E01616");
+				errorLink.transition()
+					.duration(400)
+					.style("stroke-width", "6")
+					.transition()
+					.delay(400)
+					.style("stroke-width", "3");
+				inactiveNode.selectAll("circle")
+					.filter(".outter")
+					.style("fill", "#BCC2C4");
+			}, 800);
+		
+			setInterval(function() {
+				var svg = d3.select("svg");
+				var activeNode = svg.selectAll("g").filter(".active");
+				var activeLink = svg.selectAll("line").filter(".active");
+				var inactiveLink = svg.selectAll("line").filter(".inactive");
+				activeNode.selectAll("circle")
+					.filter(".outter")
+					.transition()
+					.duration(1000)
+					.style("fill", "#00B049")
+					.transition()
+					.delay(1000)
+					.style("fill", "#00DB5B");
+				activeLink.transition()
+					.duration(1000)
+					.style("stroke", "#00B049")
+					.transition()
+					.delay(1000)
+					.style("stroke", "#00DB5B");
+				inactiveLink.style("stroke", "#BCC2C4");
+			}, 2000);
 		}
 	};
-	
-	var nodes = [
-		{
-			id:1,
-			name:"node1",
-			level:1,
-			icon:"\uF099"
-		},
-		{
-			id:2,
-			name:"node2",
-			level:1,
-			icon:"\uF143"
-		},
-		{
-			id:3,
-			name:"node3",
-			level:2,
-			icon:"\uF02B"
-		},
-		{
-			id:4,
-			name:"node4",
-			level:2,
-			icon:"\uF0C9"
-		},
-		{
-			id:5,
-			name:"node5",
-			level:2,
-			icon:"\uF0B0"
-		},
-		{
-			id:6,
-			name:"node6",
-			level:3,
-			icon:"\uF0EE"
-		},
-		{
-			id:7,
-			name:"node7",
-			level:3,
-			icon:"\uF046"
-		},
-		{
-			id:8,
-			name:"node8",
-			level:4,
-			icon:"\uF1C0"
-		}
-	];
-	var links = [
-		{
-			sourceId:1,
-			targetId:3
-		},
-		{
-			sourceId:1,
-			targetId:4
-		},
-		{
-			sourceId:2,
-			targetId:4
-		},
-		{
-			sourceId:2,
-			targetId:5
-		},
-		{
-			sourceId:3,
-			targetId:6
-		},
-		{
-			sourceId:3,
-			targetId:7
-		},
-		{
-			sourceId:4,
-			targetId:6
-		},
-		{
-			sourceId:4,
-			targetId:7
-		},
-		{
-			sourceId:6,
-			targetId:8
-		},
-		{
-			sourceId:7,
-			targetId:8
-		}
-	];
-	
-	engine.init(1000,500, nodes, links);
+	window.topologyViewer = {};
+	window.topologyViewer.init = engine.init;
+	window.topologyViewer.refreshDisplay = engine.refreshDisplay;
 })();
