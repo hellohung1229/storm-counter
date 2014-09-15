@@ -24,7 +24,7 @@ app.get('/connect', function(req, res, next) {
 	
 	http.get(URL + ':' + port + '/api/cluster/summary', function(response) {
 		if (response.statusCode ===  200) {
-			config.stormAPIUrl = URL;
+			config.stormAPIUrl = URL.replace(/http:\/\//, '');
 			config.stormAPIPort = port;
 			res.status(200).send('success');
 		}
@@ -33,10 +33,11 @@ app.get('/connect', function(req, res, next) {
 	});
 });
 
-app.use(function (req, res, next) {
+app.use('/api', function (req, res, next) {
 	var options = {
+	
 		host : config.stormAPIUrl,
-		path : req.path,
+		path : '/api' + req.path,
 		port : config.stormAPIPort,
 		method : req.method,
 		data: req.data
@@ -56,8 +57,8 @@ app.use(function (req, res, next) {
 			}
 		});
 	});
-	request.on('error', function(e) {
-		console.log('Problem with request: ' + e.message);
+	request.on('error', function(err) {
+		console.error(err.stack);;
 	});
 	request.end();
 });
