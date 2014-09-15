@@ -1,6 +1,7 @@
 bin/
 trash/
 target/
+node_modules/
 .classpath
 .project
 .settings/
