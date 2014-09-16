@@ -8,12 +8,52 @@
 			var svg = d3.select(target).append('svg')
 				.attr('width', width)
 				.attr('height', height);
-		
-			engine.topologyFormater.mapNodesOnCanva();
+			var orderedNodes = engine.topologyFormater.orderNodes(engine.topology.nodes.slice(0, engine.topology.nodes.length), engine.topology.links.slice(0, engine.topology.links.length), []);
+			engine.topologyFormater.mapNodesOnCanva(orderedNodes);
 			engine.refreshDisplay(engine.topology);
 			engine.animateDisplay();
 		},
-		topologyFormater: {
+		topologyFormater: {		
+			orderNodes: function(nodesBucket, linksBucket, output) {
+				if (nodesBucket.length === 0) {
+					return output;
+				} else {
+					var tempNodesBucket = nodesBucket.slice(0, nodesBucket.length);
+					var tempLinksBucket = linksBucket.slice(0, linksBucket.length);
+					var newLevelNodes = [];
+					tempNodesBucket.forEach(function(node) {
+						if (!engine.topologyFormater.hasParents(node, tempLinksBucket)) {
+							nodesBucket = engine.topologyFormater.popNodeFromBucket(nodesBucket, node);
+							linksBucket = engine.topologyFormater.popLinksFromBucket(linksBucket, node);
+							newLevelNodes.push(node);
+						}
+					});
+					output.push(newLevelNodes);
+					return engine.topologyFormater.orderNodes(nodesBucket, linksBucket, output);
+				}
+			},
+			popLinksFromBucket: function(linksBucket, node) {
+				var newBucket = [];
+				linksBucket.forEach(function(link) {
+					if (link.sourceId !== node.id) {
+						newBucket.push(link);
+					}
+				});
+				return newBucket;
+			},
+			popNodeFromBucket: function(nodesBucket, node) {
+				nodesBucket.splice(nodesBucket.indexOf(node),1);
+				return nodesBucket;
+			},
+			hasParents: function(node, links) {
+				var hasParents = false;
+				links.forEach(function(link) {
+					if (link.targetId === node.id) {
+						hasParents = true;
+					}
+				});
+				return hasParents;
+			},
 			getNodeById: function(id) {
 				var targetNode;
 				engine.topology.nodes.forEach(function(node) {
@@ -32,11 +72,11 @@
 				});
 				return nodes;
 			},
-			mapNodesOnCanva: function() {
-				var countOfLevels = engine.topologyFormater.getLevelsCount();
-				for (i = 1; i <= countOfLevels; i++) {
-					nodesAtThisLevel = engine.topologyFormater.getNodesPerLevel(i);
-					levelX = i * (engine.svgAttributes.width / (countOfLevels + 1));
+			mapNodesOnCanva: function(orderedNodes) {
+				var countOfLevels = orderedNodes.length;
+				for (i = 0; i < countOfLevels; i++) {
+					nodesAtThisLevel = orderedNodes[i];
+					levelX = (i+1) * (engine.svgAttributes.width / (countOfLevels + 1));
 					levelStepY = engine.svgAttributes.height / (nodesAtThisLevel.length + 1);
 					nodesAtThisLevel.forEach(function(node, index) {
 						engine.topologyFormater.setNodeCoordinates(node, levelX, (index + 1) * levelStepY);
@@ -61,7 +101,6 @@
 			}
 		},
 		refreshDisplay: function(topology) {
-			engine.topology = topology;
 			var svg = d3.select('svg');
 			var tooltip = d3.select('#tooltip');
 			if (tooltip.empty()) {
@@ -79,9 +118,9 @@
 			
 			// Data JOIN
 			var link = svg.selectAll('link')
-				.data(engine.topology.links);
+				.data(topology.links);
 			var node = svg.selectAll('g')
-				.data(engine.topology.nodes);
+				.data(topology.nodes);
 			
 			//ENTER
 			var linkEnter = link.enter();
