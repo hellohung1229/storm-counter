@@ -5,3 +5,4 @@ node_modules/
 .classpath
 .project
 .settings/
+src/main/resources/config.properties
