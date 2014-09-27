@@ -23,6 +23,7 @@ import com.twitter.hbc.core.endpoint.StatusesFilterEndpoint;
 import com.twitter.hbc.core.processor.StringDelimitedProcessor;
 import com.twitter.hbc.httpclient.auth.Authentication;
 import com.twitter.hbc.httpclient.auth.OAuth1;
+import common.utils.PropertyUtil;
 
 public class TwitterSpout extends BaseRichSpout {
 	private SpoutOutputCollector collector;
@@ -34,9 +35,9 @@ public class TwitterSpout extends BaseRichSpout {
 		this.collector = collector;
 		Hosts hosebirdHosts = new HttpHosts(Constants.STREAM_HOST);
 		StatusesFilterEndpoint hosebirdEndpoint = new StatusesFilterEndpoint();
-		List<String> terms = Lists.newArrayList("#syria");
+		List<String> terms = Lists.newArrayList("#iraq");
 		hosebirdEndpoint.trackTerms(terms);
-		Authentication hosebirdAuth = new OAuth1("MsedQrbMlzfR5mueGdACwfUa8", "fYBzpbQLc5VUcMPPVgraOpiJ0O0HKPPOsyOLkYu2jGTxVcjvDE", "2831794855-pFHf7dRW8LNmERxlDONSeUangF9axJu4ILLGSuC", "lGW39jhCGC22x3YjPzC9QxzJoH8E8pqdzR6H19T4SsioV");
+		Authentication hosebirdAuth = new OAuth1(PropertyUtil.getProperty("twitterAPIKey"), PropertyUtil.getProperty("twitterAPISecret"), PropertyUtil.getProperty("twitterAccessToken"), PropertyUtil.getProperty("twitterAccessTokenSecret"));
 		ClientBuilder builder = new CustomClientBuilder().hosts(hosebirdHosts).authentication(hosebirdAuth).endpoint(hosebirdEndpoint).processor(new StringDelimitedProcessor(msgQueue));
 
 		hosebirdClient = builder.build();
