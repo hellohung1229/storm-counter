@@ -117,7 +117,7 @@
 			}
 			
 			// Data JOIN
-			var link = svg.selectAll('link')
+			var link = svg.selectAll('line')
 				.data(topology.links);
 			var node = svg.selectAll('g')
 				.data(topology.nodes);
