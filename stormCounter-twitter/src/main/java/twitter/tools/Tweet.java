@@ -21,15 +21,15 @@ public class Tweet {
 
 	public Tweet(final String rawTweet) throws ParseException {
 		JSONParser jsonParser = new JSONParser();
-		JSONObject jsonObject = (JSONObject) ((JSONArray) jsonParser.parse(rawTweet)).get(0);
+		JSONObject jsonObject = (JSONObject) jsonParser.parse(rawTweet);
 		this.creationDate = parseDate((String) jsonObject.get("created_at"));
 		this.id = (long) jsonObject.get("id");
 		this.content = (String) jsonObject.get("text");
 		JSONObject entities = (JSONObject) jsonObject.get("entities");
-		this.hashtags = parseJSONArrayToStringArray((JSONArray) entities.get("hashtags"));
-		this.trends = parseJSONArrayToStringArray((JSONArray) entities.get("trends"));
-		this.userMentions = parseJSONArrayToStringArray((JSONArray) entities.get("user_mentions"));
-		this.urls = parseJSONArrayToStringArray((JSONArray) entities.get("urls"));
+		this.hashtags = parseJsonArray((JSONArray) entities.get("hashtags"), "text");
+		this.trends = parseJsonArray((JSONArray) entities.get("trends"), "trend");
+		this.userMentions = parseJsonArray((JSONArray) entities.get("user_mentions"), "screen_name");
+		this.urls = parseJsonArray((JSONArray) entities.get("urls"), "expanded_url");
 		this.retweeted = (boolean) jsonObject.get("retweeted");
 	}
 
@@ -79,19 +79,18 @@ public class Tweet {
 
 	private final Date parseDate(String input) {
 		SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM d HH:mm:ss Z yyyy", Locale.US);
-		System.out.println(input);
 		try {
 			return formatter.parse(input);
 		} catch (java.text.ParseException e) {
 			throw new RuntimeException(e);
 		}
 	}
-
-	private final String[] parseJSONArrayToStringArray(JSONArray jsonArray) {
+	
+	private final String[] parseJsonArray(JSONArray jsonArray, String targetField) {
 		int length = jsonArray.toArray().length;
 		String[] result = new String[length];
 		for (int i = 0; i < length; i++) {
-			result[i] = jsonArray.get(i).toString();
+			result[i] =((JSONObject) jsonArray.get(i)).get(targetField).toString();
 		}
 		return result;
 	}
