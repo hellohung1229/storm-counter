@@ -1,5 +1,6 @@
 package twitter.bolts;
 
+import twitter.tools.Tweet;
 import twitter.tools.TweetHelper;
 import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -14,8 +15,8 @@ public class HashtagsExtractorBolt extends BaseBasicBolt {
 
 	@Override
 	public void execute(Tuple input, BasicOutputCollector collector) {
-		String tweet = (String) input.getValue(0);
-		for (String hastag : TweetHelper.extractHashtagsFromTweet(tweet)) {
+		Tweet tweet = (Tweet) input.getValue(0);
+		for (String hastag : tweet.getHashtags()) {
 			collector.emit(new Values(hastag));
 		}
 	}

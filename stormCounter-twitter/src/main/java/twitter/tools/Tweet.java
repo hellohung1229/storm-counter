@@ -2,15 +2,16 @@ package twitter.tools;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-public class TweetModel {
+public class Tweet {
 	private final Date creationDate;
-	private final int id;
+	private final long id;
 	private final String content;
 	private final String[] hashtags;
 	private final String[] trends;
@@ -18,21 +19,22 @@ public class TweetModel {
 	private final String[] urls;
 	private final boolean retweeted;
 
-	public TweetModel(final String rawTweet) throws ParseException {
+	public Tweet(final String rawTweet) throws ParseException {
 		JSONParser jsonParser = new JSONParser();
 		JSONObject jsonObject = (JSONObject) ((JSONArray) jsonParser.parse(rawTweet)).get(0);
 		this.creationDate = parseDate((String) jsonObject.get("created_at"));
-		this.id = (int) jsonObject.get("id");
+		this.id = (long) jsonObject.get("id");
 		this.content = (String) jsonObject.get("text");
 		JSONObject entities = (JSONObject) jsonObject.get("entities");
-		this.hashtags = (String[]) ((JSONArray) entities.get("hashtags")).toArray();
-		this.trends = (String[]) ((JSONArray) entities.get("trends")).toArray();
-		this.userMentions = (String[]) ((JSONArray) entities.get("user_mentions")).toArray();
-		this.urls = (String[]) ((JSONArray) entities.get("urls")).toArray();
+		this.hashtags = parseJSONArrayToStringArray((JSONArray) entities.get("hashtags"));
+		this.trends = parseJSONArrayToStringArray((JSONArray) entities.get("trends"));
+		this.userMentions = parseJSONArrayToStringArray((JSONArray) entities.get("user_mentions"));
+		this.urls = parseJSONArrayToStringArray((JSONArray) entities.get("urls"));
 		this.retweeted = (boolean) jsonObject.get("retweeted");
 	}
 
-	public TweetModel(final Date creationDate, final int id, final String content, final String[] hashtags, final String[] trends, final String[] userMentions, final String[] urls, final boolean retweeted) {
+	public Tweet(final Date creationDate, final long id, final String content, final String[] hashtags, final String[] trends, final String[] userMentions, final String[] urls,
+			final boolean retweeted) {
 		this.creationDate = creationDate;
 		this.id = id;
 		this.content = content;
@@ -47,7 +49,7 @@ public class TweetModel {
 		return this.creationDate;
 	}
 
-	public final int getId() {
+	public final long getId() {
 		return this.id;
 	}
 
@@ -76,11 +78,21 @@ public class TweetModel {
 	}
 
 	private final Date parseDate(String input) {
-		SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM d HH:mm:ss Z yyyy");
+		SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM d HH:mm:ss Z yyyy", Locale.US);
+		System.out.println(input);
 		try {
 			return formatter.parse(input);
 		} catch (java.text.ParseException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private final String[] parseJSONArrayToStringArray(JSONArray jsonArray) {
+		int length = jsonArray.toArray().length;
+		String[] result = new String[length];
+		for (int i = 0; i < length; i++) {
+			result[i] = jsonArray.get(i).toString();
+		}
+		return result;
 	}
 }

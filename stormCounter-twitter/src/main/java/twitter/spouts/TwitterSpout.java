@@ -5,7 +5,10 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.json.simple.parser.ParseException;
+
 import twitter.tools.CustomClientBuilder;
+import twitter.tools.Tweet;
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -23,6 +26,7 @@ import com.twitter.hbc.core.endpoint.StatusesFilterEndpoint;
 import com.twitter.hbc.core.processor.StringDelimitedProcessor;
 import com.twitter.hbc.httpclient.auth.Authentication;
 import com.twitter.hbc.httpclient.auth.OAuth1;
+
 import common.utils.PropertyUtil;
 
 public class TwitterSpout extends BaseRichSpout {
@@ -50,8 +54,9 @@ public class TwitterSpout extends BaseRichSpout {
 		if (!hosebirdClient.isDone()) {
 			try {
 				String msg = msgQueue.take();
-				collector.emit(new Values(msg));
-			} catch (final InterruptedException e) {
+				Tweet tweet = new Tweet(msg);
+				collector.emit(new Values(tweet));
+			} catch (final InterruptedException | ParseException e) {
 				throw new RuntimeException(e);
 			}
 		}
