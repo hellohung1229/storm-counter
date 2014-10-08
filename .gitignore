@@ -5,4 +5,6 @@ node_modules/
 .classpath
 .project
 .settings/
+.idea
+*.iml
 src/main/resources/config.properties
