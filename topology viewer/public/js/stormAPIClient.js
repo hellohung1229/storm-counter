@@ -8,7 +8,7 @@
 				engine.proxyURL = 'http://localhost:8746';
 				var apiURL = $('#stormAPIURL').val();
 				var apiPort = $('#stormAPIPort').val();
-				
+
 				$.ajax({
 					url: engine.proxyURL + '/connect',
 					type: 'GET',
@@ -17,7 +17,6 @@
 						engine.getTopologies();
 					}
 				});
-				
 			});
 		},
 		getTopologies: function() {
@@ -29,7 +28,7 @@
 					if (data.length !== 0) {
 						var topologiesList = $('#topologySelectionDropdown');
 						topologiesList.empty();
-						
+
 						var topologies = data;
 						$.each(topologies, function(key, val) {
 							topologiesList.append(
@@ -39,7 +38,7 @@
 							);
 							engine.loadedTopologies[val.id] = {name:val.name};
 						});
-						
+
 						topologiesList.find('li').each(function(key, val) {
 							$(this).data('name', topologies[key].name);
 							$(this).data('id', topologies[key].id);
@@ -66,6 +65,6 @@
 		},
 		loadedTopologies: {}
 	};
-	
+
 	engine.init();
 })();

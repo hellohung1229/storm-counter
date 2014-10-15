@@ -37,14 +37,14 @@
       <!-- Main jumbotron -->
       <div class="jumbotron">
         <h1>Storm cluster</h1>
-        <p>One this page you will find a tool made to display a visual representation of a Storm topology.</p>
+        <p>On this page you will find a tool made to display a visual representation of a Storm topology.</p>
 		<p>The tool will display the topology structure, as well as a real time status for each of the nodes and links.</p>
       </div>
 
       <div class="page-header">
         <h1>Storm topology selection</h1>
       </div>
-	  
+
 	  <div class="row">
 		<div class="col-lg-12">
 			<form class="form-horizontal" id="stormAPIForm" role="form">
@@ -53,7 +53,7 @@
 					<div class="col-sm-8">
 					  <input class="form-control" id="stormAPIURL" placeholder="http://example.server.com">
 					</div>
-					
+
 				</div>
 				<div class="form-group">
 					<label for="stormAPIURL" class="col-sm-2 control-label">Storm API Port</label>
@@ -89,17 +89,11 @@
 		</div>
 	  </div>
     </div> <!-- /container -->
-	
-	<!-- jQuery -->
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-	<!-- d3js -->
-	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-	<!-- Bootstrap js -->
-	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js" charset="utf-8"></script>
-	<script src="js/bootstrap-flash.js"></script>
-	<!-- topologyViewer -->
-	<script src="js/topologyViewer.js"></script>
-	<!-- stormAPIClient -->
-	<script src="js/stormAPIClient.js"></script>
+
+  <!-- Bootstrap js -->
+  <script src="js/lib/require.min.js"></script>
+
+	<!-- main -->
+	<script src="js/main.js"></script>
   </body>
 </html>
