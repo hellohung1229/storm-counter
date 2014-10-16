@@ -1,99 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Storm topology viewer</title>
-	<!-- fontAwesome icons -->
-	<link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
-	<!-- Bootstrap css -->
-	<link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootswatch/3.2.0/sandstone/bootstrap.min.css">
-  </head>
-  <body>
-    <!-- Fixed navbar -->
-    <div class="navbar navbar-fixed-top navbar-default" role="navigation">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Storm topology viewer</a>
-        </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Storm topology viewer</title>
+  <!-- fontAwesome icons -->
+  <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+  <!-- Bootstrap css -->
+  <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootswatch/3.2.0/sandstone/bootstrap.min.css">
+</head>
+<body>
+  <!-- Fixed navbar -->
+  <div class="navbar navbar-fixed-top navbar-default" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">Storm topology viewer</a>
       </div>
+      <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#">Home</a></li>
+          <li><a href="#about">About</a></li>
+        </ul>
+      </div><!--/.nav-collapse -->
+    </div>
+  </div>
+
+  <div class="container" role="main">
+
+    <!-- Main jumbotron -->
+    <div class="jumbotron">
+      <h1>Storm cluster</h1>
+      <p>On this page you will find a tool made to display a visual representation of a Storm topology.</p>
+      <p>The tool will display the topology structure, as well as a real time status for each of the nodes and links.</p>
     </div>
 
-    <div class="container" role="main">
+    <div class="page-header">
+      <h1>Storm topology viewer</h1>
+    </div>
 
-      <!-- Main jumbotron -->
-      <div class="jumbotron">
-        <h1>Storm cluster</h1>
-        <p>On this page you will find a tool made to display a visual representation of a Storm topology.</p>
-		<p>The tool will display the topology structure, as well as a real time status for each of the nodes and links.</p>
+    <div class="row" id="loader" style="display: none;">
+      <div class="col-lg-4 col-lg-offset-4">
+        <a id="loadingMessage">Loading app...</a>
       </div>
-
-      <div class="page-header">
-        <h1>Storm topology selection</h1>
+    </div>
+    <div class="row" id="noTopology" style="display: none;">
+      <div class="col-lg-4 col-lg-offset-4">
+        <a>There is no topology on the targeted cluster.</a>
       </div>
+    </div>
+    <div class="row" id="urlSelectionRow">
+      <div class="col-lg-12">
+        <form class="form-horizontal" id="stormAPIForm" role="form">
+          <div class="form-group">
+            <label for="stormAPIURL" class="col-sm-2 control-label">Storm API URL</label>
+            <div class="col-sm-8">
+              <input class="form-control" id="stormAPIURL" placeholder="http://example.server.com">
+            </div>
 
-	  <div class="row">
-		<div class="col-lg-12">
-			<form class="form-horizontal" id="stormAPIForm" role="form">
-				<div class="form-group">
-					<label for="stormAPIURL" class="col-sm-2 control-label">Storm API URL</label>
-					<div class="col-sm-8">
-					  <input class="form-control" id="stormAPIURL" placeholder="http://example.server.com">
-					</div>
+          </div>
+          <div class="form-group">
+            <label for="stormAPIPort" class="col-sm-2 control-label">Storm API Port</label>
+            <div class="col-sm-8">
+              <input class="form-control" id="stormAPIPort" placeholder="8744">
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-2 col-sm-offset-2">
+              <button class="btn btn-default" id="APIFormButton">Connect to API</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="row" id="topologySelectionRow" style="display: none;">
+      <div class="col-lg-12">
+        <div class="dropdown">
+          <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Select topology...<span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu" id="topologySelectionDropdown"></ul>
+        </div>
+      </div>
+    </div>
+    <div class="row" id="topologyViewer" style="display: none;">
+      <div class="col-lg-12">
+        <div class="page-header">
+          <h1></h1>
+        </div>
+      </div>
+    </div>
+  </div> <!-- /container -->
 
-				</div>
-				<div class="form-group">
-					<label for="stormAPIURL" class="col-sm-2 control-label">Storm API Port</label>
-					<div class="col-sm-8">
-					  <input class="form-control" id="stormAPIPort" placeholder="8745">
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-sm-2 col-sm-offset-2">
-					  <button class="btn btn-default" id="APIFormButton">Connect to API</button>
-					</div>
-				</div>
-			</form>
-		</div>
-	  </div>
-	  <div class="row" id="topologySelectionRow">
-		<div class="col-lg-12">
-			<div class="dropdown">
-			  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-				Select topology...
-				<span class="caret"></span>
-			  </button>
-			  <ul class="dropdown-menu" role="menu" id="topologySelectionDropdown">
-			  </ul>
-			</div>
-		</div>
-	  </div>
-	  <div class="row" id="topologyViewer">
-		<div class="col-lg-12">
-			<div class="page-header">
-				<h1></h1>
-			  </div>
-		</div>
-	  </div>
-    </div> <!-- /container -->
+  <!-- Jquery js -->
+  <script src="js/lib/jquery.min.js"></script>
 
-  <!-- Bootstrap js -->
+  <!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+  <!-- Require js -->
   <script src="js/lib/require.min.js"></script>
 
-	<!-- main -->
-	<script src="js/main.js"></script>
-  </body>
+  <!-- main -->
+  <script src="js/main.js"></script>
+</body>
 </html>

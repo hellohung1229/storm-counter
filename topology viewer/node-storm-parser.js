@@ -1,6 +1,6 @@
 /**
 *	Node parser for the Storm UI
-*	
+*
 *	This parser is made to replace the Storm API, which is uncompleted and not working.
 *	The parser's config is set up by calling the '/checkUrl' with a Storm UI URL as a query parameter.
 *	The parser is called with the same URLs as the Storm UI, except for the "component" page, which is here splitted between "spouts" and "bolts".
@@ -12,14 +12,23 @@ var app = express();
 var request = require('request');
 var cheerio = require('cheerio');
 
+// MIDDLEWARES
+app.use(function (req, res, next) {
+	res.header('Access-Control-Allow-Origin', 'null');
+	next();
+});
+
 app.route('/checkUrl')
 	.get(function(req, res, next) {
 		var url = req.query.url;
 		if (url) {
 			request(url, function(err, response, body) {
-				if (err) throw err;
-				parser.config.url = url;
-				res.status(200).json({success:true});
+				if (err) {
+					res.status(500).json({error:'bad url'});
+				} else{
+					parser.config.url = url;
+					res.status(200).json({success:true});
+				}
 			});
 		} else {
 			res.status(500).json({error:'missing url'});
@@ -35,7 +44,7 @@ app.route('/topology/:topologyId')
 	.get(function(req, res, next) {
 		parser.getComponents(req.topologyId, res);
 	});
-	
+
 app.route('/topology/:topologyId/bolt/:componentName')
 	.get(function(req, res, next) {
 		parser.getBolt(req.topologyId, req.componentName, res);
@@ -45,17 +54,17 @@ app.route('/topology/:topologyId/spout/:componentName')
 	.get(function(req, res, next) {
 		parser.getSpout(req.topologyId, req.componentName, res);
 	});
-	
+
 app.param('topologyId', function(req, res, next, id) {
 		req.topologyId = id;
 		next();
 	});
-	
+
 app.param('componentName', function(req, res, next, name) {
 		req.componentName = name;
 		next();
 	});
-	
+
 var parser = {
 	config: {},
 	uris: {
@@ -65,8 +74,11 @@ var parser = {
 	},
 	loadPage: function(url, callback) {
 		request(url, function(err, response, body) {
-			if (err) throw err;
-			callback(body);
+			if (err) {
+				response.status(500).json({error: err});
+			} else {
+				callback(body);
+			}
 		});
 	},
 	getTopologies: function(res) {
